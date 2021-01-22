@@ -7,16 +7,16 @@ processor-toolbox:
       - { type: basic-root-writer,   name: writer }
 
     connections:
-      - signal: "egg:header"
-        slot: "fft:header"
-      - signal: "egg:ts"
-        slot: "fft:ts-fftw"
-      - signal: "fft:fft"
-        slot: "to-ps:fs-fftw-to-psd"
-      - signal: "to-ps:ps"
-        slot: "lpf:ps"
-      - signal: "lpf:ps"
-        slot: "writer:lpf-ps"
+      - signal: egg:header
+        slot: fft:header
+      - signal: egg:ts
+        slot: fft:ts-fftw
+      - signal: fft:fft
+        slot: to-ps:fs-fftw-to-psd
+      - signal: to-ps:ps
+        slot: lpf:ps
+      - signal: lpf:ps
+        slot: writer:lpf-ps
 
     run-queue:
       - egg
@@ -35,4 +35,4 @@ processor-toolbox:
     
     writer:
         output-file: "/path/to/file.root"
-        file-flag: recreate"
+        file-flag: recreate
