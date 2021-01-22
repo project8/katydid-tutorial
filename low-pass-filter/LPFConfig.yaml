@@ -1,7 +1,8 @@
 processor-toolbox:
     processors:
       - { type: egg-processor,       name: egg }
-      - { type: forward-fftw,          name: fft }
+      - { type: forward-fftw,        name: fft }
+      - { type: convert-to-power,    name: to-ps }
       - { type: low-pass-filter,     name: lpf }
       - { type: basic-root-writer,   name: writer }
 
@@ -9,8 +10,10 @@ processor-toolbox:
       - signal: "egg:header"
         slot: "fft:header"
       - signal: "egg:ts"
-        slot: "fft:ts"
-      - signal: "fft:fft-forward"
+        slot: "fft:ts-fftw"
+      - signal: "fft:fft"
+        slot: "to-ps:fs-fftw-to-psd"
+      - signal: "to-ps:ps"
         slot: "lpf:ps"
       - signal: "lpf:ps"
         slot: "writer:lpf-ps"
