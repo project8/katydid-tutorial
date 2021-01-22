@@ -21,18 +21,18 @@ processor-toolbox:
     run-queue:
       - egg
 
-    egg:
-        filename: "/path/to/file.egg"
-        egg-reader: egg3
-        slice-size: 4096
-        number-of-slices: 1
-    
-    fft:
-        transform-flag: ESTIMATE
-    
-    lpf:
-        rc: 50.0e6
-    
-    writer:
-        output-file: "/path/to/file.root"
-        file-flag: recreate
+egg:
+    filename: "/path/to/file.egg"
+    egg-reader: egg3
+    slice-size: 4096
+    number-of-slices: 1
+
+fft:
+    transform-flag: ESTIMATE
+
+lpf:
+    rc: 50.0e6
+
+writer:
+    output-file: "/path/to/file.root"
+    file-flag: recreate
