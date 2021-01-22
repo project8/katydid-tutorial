@@ -1,7 +1,7 @@
 processor-toolbox:
     processors:
       - { type: egg-processor,       name: egg }
-      - { type: simple-fft,          name: fft }
+      - { type: forward-fftw,          name: fft }
       - { type: low-pass-filter,     name: lpf }
       - { type: basic-root-writer,   name: writer }
 
