@@ -37,7 +37,13 @@ namespace Katydid
      @brief Applies a low-pass filter
 
      @details
-     Non-ideal implementation of a low-pass filter processor.
+     Frequency-domain implementation of a single-pole RC low-pass filter.  
+     This is no-doubt a non-ideal implementation, but demonstrates the features of a processor very well.
+
+     The relationship between the cutoff frequency, f_c, and the RC constant is:
+     ```
+     RC = 1 / 2*pi*f_c
+     ```
 
      Configuration name: "low-pass-filter"
 
