@@ -15,8 +15,8 @@ processor-toolbox:
         slot: to-ps:fs-fftw-to-ps
       - signal: to-ps:ps
         slot: lpf:ps
-      - signal: fft:fft
-        slot: writer:fs-fftw
+      - signal: to-ps:ps
+        slot: writer:ps
       - signal: lpf:ps
         slot: writer:lpf-ps
 
@@ -33,7 +33,8 @@ fft:
     transform-flag: ESTIMATE
 
 lpf:
-    rc: 50.0e6
+    # RC for cutoff frequency of 50 MHz
+    rc: 3.1831e-9  
 
 writer:
     output-file: "/path/to/file.root"
