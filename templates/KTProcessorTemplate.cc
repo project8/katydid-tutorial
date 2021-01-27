@@ -7,20 +7,29 @@
 
 #include "KTProcessorTemplate.hh"
 
+// If you want to build this, you must comment out these include lines, since they don't really exist
+#include "KTDummyDataClass1.hh"
+#include "KTDummyDataClass1.hh"
+#include "KTDummyDataClass1.hh"
+#include "KTNewDummyDataClass.hh"
+
 #include "KTLogger.hh"
+
+#include "param_node.hh"
+
 
 namespace Katydid
 {
-    KTLOGGER(evlog, "KTProcessorTemplate");
+    KTLOGGER(ptlog, "KTProcessorTemplate");
 
     // Register the processor
     KT_REGISTER_PROCESSOR(KTProcessorTemplate, "processor-template");
 
     KTProcessorTemplate::KTProcessorTemplate(const std::string& name) :
             KTProcessor(name),
-            fMemberVariable1(0.),
+            fMemberVariable1(0),
             fMemberVariable2(0.),
-            fMemberVariable3(0.),
+            fMemberVariable3(""),
             fDummySignal1("dummy-signal-1", this),
             fDummySignal2("dummy-signal-2", this),
             fDummySignal3("dummy-signal-3", this),
@@ -40,30 +49,36 @@ namespace Katydid
     {
         if (node == NULL) return false;
 
-        SetMemberVariable1(node->get_value< double >("member-variable-1", fMemberVariable1));
+        SetMemberVariable1(node->get_value< unsigned >("member-variable-1", fMemberVariable1));
         SetMemberVariable2(node->get_value< double >("member-variable-2", fMemberVariable2));
-        SetMemberVariable3(node->get_value< double >("member-variable-3", fMemberVariable3));
+        SetMemberVariable3(node->get_value< std::string >("member-variable-3", fMemberVariable3));
         
         return true;
     }
 
-    bool KTProcessorTemplate::AnalyzeDummyObject1( KTDummyDataObject1& someData )
+    bool KTProcessorTemplate::AnalyzeDummyClass1( KTDummyDataClass1& someData )
     {
-        // The meat of the processor slot goes here
+        KTNewDummyDataClass& newData = someData.Of< KTNewDummyDataClass >()
+
+        // The meat of the processor action on KTDummyDataClass1 goes here
 
         return true;
     }
 
-    bool KTProcessorTemplate::AnalyzeDummyObject2( KTDummyDataObject2& someData )
+    bool KTProcessorTemplate::AnalyzeDummyClass2( KTDummyDataClass2& someData )
     {
-        // The meat of the processor slot goes here
+        KTNewDummyDataClass& newData = someData.Of< KTNewDummyDataClass >()
+
+        // The meat of the processor action on KTDummyDataClass2 goes here
 
         return true;
     }
 
-    bool KTProcessorTemplate::AnalyzeDummyObject3( KTDummyDataObject3& someData )
+    bool KTProcessorTemplate::AnalyzeDummyClass3( KTDummyDataClass3& someData )
     {
-        // The meat of the processor slot goes here
+        KTNewDummyDataClass& newData = someData.Of< KTNewDummyDataClass >()
+
+        // The meat of the processor action on KTDummyDataClass3 goes here
 
         return true;
     }
