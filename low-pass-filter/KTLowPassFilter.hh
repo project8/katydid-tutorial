@@ -100,6 +100,5 @@ namespace Katydid
 
     };
 
-}
- /* namespace Katydid */
+} /* namespace Katydid */
 #endif /* KTLOWPASSFILTER_HH_ */
