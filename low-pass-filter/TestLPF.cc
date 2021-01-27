@@ -29,38 +29,38 @@ int main()
     // Create and setup processor
     KTLowPassFilter tProc;
 
-    tProc->SetRC(3.1831e-9); // corresponds to f_c = 50 MHz
+    tProc.SetRC(3.1831e-9); // corresponds to f_c = 50 MHz
 
 
     // Parameters for filling data
     unsigned nBins = 100;
     double minFreq = 0.;
-    double maxFreq = 100.;
+    double maxFreq = 100.e6;
 
     // Test processing of KTFrequencySpectrumDataFFTW
 
-    KTFrequencySpectrumDataFFTW tFSFFTW;
+    //KTFrequencySpectrumDataFFTW tFSFFTW;
 
     // TODO: Fill tFSFFTW
 
-    tProc.Filter(tDDC1);
+    //tProc.Filter(tFSFFTW);
 
     // Check Results
-    KTLowPassFilteredFSDataFFTW& tLPFFSFFTW = tFSFFTW.Of< KTLowPassFilteredFSDataFFTW >();
+    //KTLowPassFilteredFSDataFFTW& tLPFFSFFTW = tFSFFTW.Of< KTLowPassFilteredFSDataFFTW >();
 
     // TODO: Verify that the contents of tLPFFSFFTW are as expected
 
 
     // Test processing of KTFrequencySpectrumDataPolar
 
-    KTFrequencySpectrumDataPolar tFSPolar;
+    //KTFrequencySpectrumDataPolar tFSPolar;
 
     // TODO: Fill tFSPolar
 
-    tProc.Filter(tFSPolar);
+    //tProc.Filter(tFSPolar);
 
     // Check Results
-    KTLowPassFilteredFSDataPolar& tLPFFSPolar = tFSPolar.Of< KTLowPassFilteredFSDataPolar >();
+    //KTLowPassFilteredFSDataPolar& tLPFFSPolar = tFSPolar.Of< KTLowPassFilteredFSDataPolar >();
 
     // TODO: Verify that the contents of tLPFFSPolar are as expected
     
@@ -80,9 +80,10 @@ int main()
 
     // Check Results
     KTLowPassFilteredPSData& tLPFPS = tPS.Of< KTLowPassFilteredPSData >();
-    KTPowerSpectrum* tOneLPFPS = tLPFPS.GetSpectrum(0);
+    KTPowerSpectrum* tOneLPFPS = tLPFPS.GetSpectrum();
 
     // TODO: Verify that the contents of tLPFPS are as expected
+    //       Note that just printing out the values isn't a test that can be automated 
     for (unsigned iBin = 0; iBin < nBins; ++iBin)
     {
         KTWARN(testlog, iBin << "  " << (*tOnePS)(iBin) << " --> " << (*tOneLPFPS)(iBin))
