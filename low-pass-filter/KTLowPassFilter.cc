@@ -144,12 +144,12 @@ namespace Katydid
         double twoPiRCf, real, imag, denom, newReal, newImag;
         for (unsigned iBin = 0; iBin < nBins; ++iBin)
         {
-            real = (*frequencySpectrum)(iBin)[0];
-            imag = (*frequencySpectrum)(iBin)[1];
+            real = (*frequencySpectrum)(iBin).real();
+            imag = (*frequencySpectrum)(iBin).imag();
             twoPiRCf = KTMath::TwoPi() * fRC * frequencySpectrum->GetBinCenter(iBin);
             denom = 1 + twoPiRCf * twoPiRCf;
-            (*newSpectrum)(iBin)[0] = (real + imag * twoPiRCf) / denom;
-            (*newSpectrum)(iBin)[1] = (imag - real * twoPiRCf) / denom;
+            (*newSpectrum)(iBin).real() = (real + imag * twoPiRCf) / denom;
+            (*newSpectrum)(iBin).imag() = (imag - real * twoPiRCf) / denom;
         }
 
         return newSpectrum;
