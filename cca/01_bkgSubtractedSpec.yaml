@@ -1,0 +1,126 @@
+processor-toolbox:
+    processors:
+      - type: egg-processor
+        name: egg1
+      - type: forward-fftw
+        name: fft1
+      - type: convert-to-power
+        name: to-ps1
+
+      - type: egg-processor 
+        name: egg2
+      - type: forward-fftw
+        name: fft2
+      - type: convert-to-power
+        name: to-ps2
+
+      - type: data-accumulator
+        name: acc
+      - type: gain-variation
+        name: gainvar
+
+      - type: variable-spectrum-discriminator
+        name: discrim
+
+      - type: basic-root-writer
+        name: writer
+      - type: root-tree-writer
+        name: treewriter
+      - type: root-spectrogram-writer
+        name: specwriter
+
+    connections:
+      # This code block is for processing the noise-only data to remove the frequency dependent bkg
+      - signal: "egg1:header"
+        slot: "fft1:header"
+      - signal: "egg1:ts"
+        slot: "fft1:ts-fftw"
+      - signal: "fft1:fft"
+        slot: "to-ps1:fs-fftw-to-psd"
+      - signal: "to-ps1:psd"
+        slot: "acc:ps"
+      - signal: "acc:ps-finished"
+        slot: "gainvar:ps-var"
+      - signal: "acc:ps-finished"
+        slot: "writer:psd"                 # Write accumulated PSD histogram
+      - signal: "gainvar:gain-var"
+        slot: "writer:gain-var"            # Write gain-var histogram
+      - signal: "gainvar:gain-var"
+        slot: "discrim:gv"
+
+      - signal: "egg2:header"
+        slot: "fft2:header"
+      - signal: "egg2:ts"
+        slot: "fft2:ts-fftw"
+      - signal: "fft2:fft"
+        slot: "to-ps2:fs-fftw-to-psd"
+      # - signal: "to-ps2:psd"               
+      #   slot: "writer:ps"                 # Write signal PSD for each time slice
+      - signal: "to-ps2:psd"
+        slot: "discrim:ps-pre"
+      - signal: "to-ps2:psd"
+        slot: "specwriter:psd"
+      - signal: "egg2:egg-done"
+        slot: "specwriter:write-file"     # Write spectrogram
+      - signal: "discrim:disc-1d"
+        slot: "treewriter:disc-1d"        # Write spare spectrogram bins
+      # - signal: "egg2:ts"               
+      #   slot: "writer:ts"               # Write signal time-series for each slice
+
+    run-queue:
+      - egg1
+      - egg2
+
+egg1:
+    filename: "noise.egg"
+    egg-reader: egg3
+    slice-size: 8192
+    number-of-slices: 400 
+
+fft1:
+    transform-flag: ESTIMATE
+
+acc:
+    number-to-average: 0
+    signal-interval: 0
+
+gainvar: 
+    normalize: false
+    min-frequency: 0
+    max-frequency: 403.e6
+    fit-points: 300
+
+egg2:
+    filename: "$eggfilename"
+    egg-reader: egg3
+    number-of-slices: 400
+    slice-size: 8192
+
+fft2:
+    transform-flag: ESTIMATE
+
+discrim:
+    min-frequency: 80.e6         # Here we chop the frequency range to (100 +/-
+    max-frequency: 200.e6        # 42.5) MHz, the active bandwidth of the RSA
+    # snr-threshold-power: 6.0
+    sigma-threshold: 9.0
+    normalize: true
+    neighborhood-radius: 2.
+
+writer:
+    output-file: "bkgSubtractedSpec_basic.root"
+    file-flag: recreate
+
+treewriter:
+    output-file: "bkgSubtractedSpec_tree.root"
+    file-flag: recreate
+
+specwriter:
+    output-file: "bkgSubtractedSpec_spectrogram.root"
+    file-flag: recreate
+    min-time: 0.0
+    max-time: 0.010
+    min-freq: 0.0e6
+    max-freq: 403.0e6
+
+
