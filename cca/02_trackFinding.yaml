@@ -21,6 +21,16 @@ processor-toolbox:
 
       - type: variable-spectrum-discriminator
         name: discrim
+      - type: sequential-track-finder
+        name: seq-tr-clust
+      - type: overlapping-track-clustering
+        name: otc
+      - type: iterative-track-clustering
+        name: itc
+      - type: track-proc-ws
+        name: tr-proc-ws
+      - type: apply-cut
+        name: ac1b
 
       - type: basic-root-writer
         name: writer
@@ -61,12 +71,30 @@ processor-toolbox:
       #   slot: "writer:ts"               # Write signal time-series for each slice
       - signal: "to-ps2:psd"
         slot: "discrim:ps-pre"
-      - signal: "to-ps2:psd"
-        slot: "specwriter:psd"
-      - signal: "egg2:egg-done"
-        slot: "specwriter:write-file"     # Write spectrogram
+      # - signal: "to-ps2:psd"
+      #   slot: "specwriter:psd"
+      # - signal: "egg2:egg-done"
+      #   slot: "specwriter:write-file"     # Write spectrogram
       - signal: "discrim:disc-1d"
         slot: "treewriter:disc-1d"        # Write spare spectrogram bins
+      - signal: "discrim:disc-1d"
+        slot: "seq-tr-clust:disc-1d"       # Beginning track finding algorithm
+      - signal: "seq-tr-clust:seq-cand"
+        slot: "otc:seq-cand"
+      - signal: "otc:seq-cand"
+        slot: "itc:seq-cand"
+      - signal: "itc:seq-cand"
+        slot: "ac1b:apply"
+      - signal: "ac1b:pass"
+        slot: "tr-proc-ws:seq-cand"
+      - signal: "egg2:egg-done"
+        slot: "seq-tr-clust:done"
+      - signal: "seq-tr-clust:clustering-done"
+        slot: "otc:do-clustering"
+      - signal: "otc:clustering-done"
+        slot: "itc:do-clustering"
+      - signal: "tr-proc-ws:track"      
+        slot: "treewriter:proc-track"          # Write processed tracks to a ROOT tree
 
 
     run-queue:
@@ -109,16 +137,47 @@ discrim:
     normalize: true
     neighborhood-radius: 2.
 
+seq-tr-clust:
+    min-frequency: 3.e6
+    max-frequency: 400.e6
+    initial-slope : 0.3e9                # slope of a track with 1 point
+    slope-method: weighted-first-point-ref
+    n-slope-points: 10
+    time-gap-tolerance: 0.1e-3
+    frequency-acceptance: 56e3
+    trimming-threshold: 6.0            # snr threshold for the first and last point of a candidate
+    min-points: 3
+    min-slope: 0
+
+otc:
+    max-track-width: 150e3          # For most tracks this only needs to be 150e3-ish. Only curved tracks profit from this number being bigger
+
+itc:
+    time-gap-tolerance: 1.0e-3
+    frequency-acceptance: 100.0e3
+    max-track-width: 100.0e3
+
+tr-proc-ws:
+    min-slope: 10.0e6
+
+ac1b:
+    seq-line-nup-cut:               # can be applied after stf, after otc or after itc
+        min-total-nup: 0.0
+        min-average-nup: 7.0
+        time-or-bin-average: bin
+        wide-or-narrow: wide        # wide is default
+
+
 writer:
-    output-file: "bkgSubtractedSpec_basic.root"
+    output-file: "trackFinding_basic.root"
     file-flag: recreate
 
 treewriter:
-    output-file: "bkgSubtractedSpec_tree.root"
+    output-file: "trackFinding_tree.root"
     file-flag: recreate
 
 specwriter:
-    output-file: "bkgSubtractedSpec_spectrogram.root"
+    output-file: "trackFinding_spectrogram.root"
     file-flag: recreate
     min-time: 0.0
     max-time: 0.010

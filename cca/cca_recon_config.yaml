@@ -120,7 +120,7 @@ processor-toolbox:
         - signal: "tr-proc-ws:track"
           slot: "mptb:track"
 
-        - signal: "tr-proc-ws:track"      # This connection writes before clustering
+        - signal: "tr-proc-ws:track"      
           slot: "trw:proc-track"          # Write processed tracks to a ROOT tree
 
         - signal: "egg2:egg-done"
