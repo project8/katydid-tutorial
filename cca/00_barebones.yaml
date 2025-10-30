@@ -28,7 +28,7 @@ egg:
     filename: "/path/to/file.egg"
     egg-reader: egg3
     slice-size: 8192
-    number-of-slices: 100 
+    number-of-slices: 400 
 
 fft:
     transform-flag: ESTIMATE
